@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة الدفع التفاعلية الآمنة</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* تصميم البطاقة البصرية في الأعلى */
+        .card-preview {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            border-radius: 15px;
+            color: #ffffff;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+            margin-bottom: 30px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-chip {
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 6px;
+        }
+
+        .card-number-display {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            word-spacing: 4px;
+            margin: 15px 0;
+            direction: ltr;
+            text-align: center;
+        }
+
+        .card-details-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .label-small {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+
+        /* تصميم حقول الإدخال */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* زر الدفع */
+        .btn-pay {
+            width: 100%;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-pay:hover {
+            background-color: #4338ca;
+        }
+
+        /* نافذة النجاح المنبثقة البسيطة */
+        .success-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background-color: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .success-title {
+            font-size: 1.4rem;
+            color: #111827;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .success-desc {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-close-modal {
+            background-color: #374151;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-container">
+    <!-- نافذة النجاح المنبثقة -->
+    <div class="success-overlay" id="successModal">
+        <div class="success-icon">✓</div>
+        <div class="success-title">تمت العملية بنجاح!</div>
+        <div class="success-desc">تمت محاكاة عملية الدفع بنجاح وأمان وثبات على نفس الصفحة.</div>
+        <button class="btn-close-modal" onclick="closeModal()">إغلاق</button>
+    </div>
+
+    <!-- شكل البطاقة التفاعلي -->
+    <div class="card-preview">
+        <div class="card-chip"></div>
+        <div class="card-number-display" id="cardNumView">•••• •••• •••• ••••</div>
+        <div class="card-details-display">
+            <div>
+                <div class="label-small">حامل البطاقة</div>
+                <div id="cardNameView">اسم الحامل</div>
+            </div>
+            <div>
+                <div class="label-small">تاريخ الانتهاء</div>
+                <div id="cardExpiryView">MM/YY</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- النموذج محلي بالكامل لحمايتك من الحظر -->
+    <form id="paymentForm">
+        <div class="form-group">
+            <label for="cardName">اسم حامل البطاقة</label>
+            <input type="text" id="cardName" class="form-control" placeholder="John Doe" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="cardNumber">رقم البطاقة</label>
+            <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required autocomplete="off" style="direction: ltr;">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cardExpiry">تاريخ الانتهاء</label>
+                <input type="text" id="cardExpiry" class="form-control" placeholder="MM/YY" maxlength="5" required autocomplete="off" style="direction: ltr;">
+            </div>
+
+            <div class="form-group">
+                <label for="cardCVC">رمز الأمان (CVC)</label>
+                <input type="text" id="cardCVC" class="form-control" placeholder="•••" maxlength="3" required autocomplete="off" style="direction: ltr;">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-pay" id="payBtn">دفع الآن</button>
+    </form>
+</div>
+
+<script>
+    const cardNameInput = document.getElementById('cardName');
+    const cardNumberInput = document.getElementById('cardNumber');
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    const cardCVCInput = document.getElementById('cardCVC');
+
+    const cardNameView = document.getElementById('cardNameView');
+    const cardNumView = document.getElementById('cardNumView');
+    const cardExpiryView = document.getElementById('cardExpiryView');
+    const successModal = document.getElementById('successModal');
+
+    cardNameInput.addEventListener('input', (e) => {
+        let value = e.target.value;
+        cardNameView.textContent = value.trim() === '' ? 'اسم الحامل' : value.toUpperCase();
+    });
+
+    cardNumberInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = '';
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) formattedValue += ' ';
+            formattedValue += value[i];
+        }
+        e.target.value = formattedValue;
+        cardNumView.textContent = formattedValue === '' ? '•••• •••• •••• ••••' : formattedValue;
+    });
+
+    cardExpiryInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+        cardExpiryView.textContent = value === '' ? 'MM/YY' : value;
+    });
+
+    cardCVCInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/gi, '');
+    });
+
+    // معالجة الدفع محلياً وعرض شاشة نجاح تفاعلية ومبهرة
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('payBtn');
+        
+        btn.innerText = "جاري معالجة الدفع آمنياً...";
+        btn.disabled = true;
+
+        // محاكاة وقت المعالجة (ثانية واحدة) ثم إظهار نافذة النجاح
+        setTimeout(() => {
+            successModal.style.display = 'flex';
+            btn.innerText = "دفع الآن";
+            btn.disabled = false;
+        }, 1200);
+    });
+
+    function closeModal() {
+        successModal.style.display = 'none';
+        document.getElementById('paymentForm').reset();
+        cardNumView.textContent = '•••• •••• •••• ••••';
+        cardNameView.textContent = 'اسم الحامل';
+        cardExpiryView.textContent = 'MM/YY';
+    }
+</script>
+
+</body>
+</html>
