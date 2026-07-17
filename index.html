@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة الدفع التفاعلية الآمنة</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+        }
+
+        /* تصميم البطاقة البصرية في الأعلى */
+        .card-preview {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            border-radius: 15px;
+            color: #ffffff;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+            margin-bottom: 30px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-chip {
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 6px;
+        }
+
+        .card-number-display {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            word-spacing: 4px;
+            margin: 15px 0;
+            direction: ltr;
+            text-align: center;
+        }
+
+        .card-details-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .label-small {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+
+        /* تصميم حقول الإدخال */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        /* تنسيق الحقول الجانبية (التاريخ و الـ CVC) */
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* زر الدفع */
+        .btn-pay {
+            width: 100%;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-pay:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-container">
+    <!-- شكل البطاقة التفاعلي -->
+    <div class="card-preview">
+        <div class="card-chip"></div>
+        <div class="card-number-display" id="cardNumView">•••• •••• •••• ••••</div>
+        <div class="card-details-display">
+            <div>
+                <div class="label-small">حامل البطاقة</div>
+                <div id="cardNameView">اسم الحامل</div>
+            </div>
+            <div>
+                <div class="label-small">تاريخ الانتهاء</div>
+                <div id="cardExpiryView">MM/YY</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج الدفع -->
+    <form id="paymentForm" onsubmit="event.preventDefault(); alert('تمت محاكاة عملية الدفع بنجاح وتحقق النظام من البيانات!');">
+        
+        <!-- اسم حامل البطاقة -->
+        <div class="form-group">
+            <label for="cardName">اسم حامل البطاقة</label>
+            <input type="text" id="cardName" class="form-control" placeholder="John Doe" required autocomplete="off">
+        </div>
+
+        <!-- رقم البطاقة -->
+        <div class="form-group">
+            <label for="cardNumber">رقم البطاقة</label>
+            <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required autocomplete="off" style="direction: ltr;">
+        </div>
+
+        <div class="form-row">
+            <!-- تاريخ انتهاء الصلاحية -->
+            <div class="form-group">
+                <label for="cardExpiry">تاريخ الانتهاء</label>
+                <input type="text" id="cardExpiry" class="form-control" placeholder="MM/YY" maxlength="5" required autocomplete="off" style="direction: ltr;">
+            </div>
+
+            <!-- رمز CVC -->
+            <div class="form-group">
+                <label for="cardCVC">رمز الأمان (CVC)</label>
+                <input type="text" id="cardCVC" class="form-control" placeholder="•••" maxlength="3" required autocomplete="off" style="direction: ltr;">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-pay">دفع الآن</button>
+    </form>
+</div>
+
+<script>
+    // ربط عناصر المدخلات وعناصر العرض البصري
+    const cardNameInput = document.getElementById('cardName');
+    const cardNumberInput = document.getElementById('cardNumber');
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    const cardCVCInput = document.getElementById('cardCVC');
+
+    const cardNameView = document.getElementById('cardNameView');
+    const cardNumView = document.getElementById('cardNumView');
+    const cardExpiryView = document.getElementById('cardExpiryView');
+
+    // 1. تحديث وتنسيق اسم حامل البطاقة
+    cardNameInput.addEventListener('input', (e) => {
+        let value = e.target.value;
+        cardNameView.textContent = value.trim() === '' ? 'اسم الحامل' : value.toUpperCase();
+    });
+
+    // 2. تحديث وتنسيق رقم البطاقة (إضافة مسافة كل 4 أرقام)
+    cardNumberInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = '';
+        
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += ' ';
+            }
+            formattedValue += value[i];
+        }
+        
+        e.target.value = formattedValue;
+        cardNumView.textContent = formattedValue === '' ? '•••• •••• •••• ••••' : formattedValue;
+    });
+
+    // 3. تحديث وتنسيق تاريخ الانتهاء (إضافة شرطة مائلة تلقائياً MM/YY)
+    cardExpiryInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+        
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        
+        e.target.value = value;
+        cardExpiryView.textContent = value === '' ? 'MM/YY' : value;
+    });
+
+    // 4. منع إدخال أي شيء عدا الأرقام في حقل CVC
+    cardCVCInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/gi, '');
+    });
+</script>
+
+</body>
+</html>
